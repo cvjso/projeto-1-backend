@@ -1,13 +1,13 @@
-package com.cesar.school.projeto1cvjsophmt;
+package com.example.atvd;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Projeto1CvjsoPhmtApplication {
+public class AtvdApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Projeto1CvjsoPhmtApplication.class, args);
+		SpringApplication.run(AtvdApplication.class, args);
 	}
 
 }
