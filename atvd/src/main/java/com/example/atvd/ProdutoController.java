@@ -16,13 +16,14 @@ public class ProdutoController {
 
     @PostMapping(path="/add") // Map ONLY POST Requests
     public @ResponseBody String addNewProduto (@RequestParam String nome
-            , @RequestParam Integer preco, @RequestParam Integer aliquota) {
+            , @RequestParam Integer preco, @RequestParam Integer aliquota, @RequestParam Long codigo) {
 
         if(preco > 0 && aliquota >= 0 && aliquota <= 1 && !nome.strip().equals("")) {
             Produto n = new Produto();
             n.setNome(nome);
             n.setPreco(preco);
             n.setAliquota(aliquota);
+            n.setCodigo(codigo);
             produtoRepository.save(n);
             return "Saved";
         }
@@ -41,12 +42,13 @@ public class ProdutoController {
     }
 
     @PutMapping(path="/update")
-    public @ResponseBody String updateProduto(@RequestParam long id, @RequestParam String nome, @RequestParam Integer preco, @RequestParam Integer aliquota) {
+    public @ResponseBody String updateProduto(@RequestParam long id, @RequestParam String nome, @RequestParam Integer preco, @RequestParam Integer aliquota, @RequestParam Long codigo) {
         Produto n = new Produto();
         n.setId(id);
         n.setNome(nome);
         n.setPreco(preco);
         n.setAliquota(aliquota);
+        n.setCodigo(codigo);
         produtoRepository.save(n);
         return "Updated";
     }

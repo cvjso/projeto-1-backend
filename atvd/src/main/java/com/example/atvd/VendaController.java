@@ -42,7 +42,7 @@ public class VendaController {
         n.setProdutoId(produtoId);
         n.setQuantidade(quantidade);
         n.setPrecoFinal(quantidade * p.get().getPreco());
-        n.setImpostoPago(n.getPrecoFinal() * p.get().getAliquota());
+        n.setImpostoPago((int) (n.getPrecoFinal() * p.get().getAliquota()));
         vendaRepository.save(n);
         return "Saved";
     }
@@ -69,7 +69,7 @@ public class VendaController {
         n.setQuantidade(quantidade);
         n.setCupomId(cupomId);
         n.setPrecoFinal(quantidade * p.get().getPreco());
-        n.setImpostoPago(n.getPrecoFinal() * p.get().getAliquota());
+        n.setImpostoPago((int) (n.getPrecoFinal() * p.get().getAliquota()));
         vendaRepository.save(n);
         return "Saved";
     }

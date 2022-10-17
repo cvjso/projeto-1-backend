@@ -12,9 +12,17 @@ public class Produto {
     @Column(nullable = false)
     private Integer preco;
     @Column(nullable = false)
+    private Double aliquota;
+    @Column(nullable = false)
+    private Long codigo;
 
-    private Integer aliquota;
+    public void setCodigo(Long codigo) {
+        this.codigo = codigo;
+    }
 
+    public Long getCodigo() {
+        return codigo;
+    }
 
     public void setId(long id) {
         this.id = id;
@@ -28,7 +36,7 @@ public class Produto {
         this.preco = preco;
     }
 
-    public void setAliquota(Integer aliquota) {
+    public void setAliquota(double aliquota) {
         this.aliquota = aliquota;
     }
 
@@ -44,7 +52,7 @@ public class Produto {
         return preco;
     }
 
-    public Integer getAliquota() {
+    public Double getAliquota() {
         return aliquota;
     }
 }
