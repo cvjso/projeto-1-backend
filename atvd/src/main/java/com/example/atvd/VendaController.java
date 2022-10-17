@@ -27,7 +27,7 @@ public class VendaController {
     @Autowired
     private CupomRepository cupomRepository;
 
-    @PostMapping(path="/add") // Map ONLY POST Requests
+    @PostMapping(path="/add")
     public @ResponseBody String addNewVenda (@RequestParam long produtoId
             , @RequestParam Integer quantidade, @RequestParam Optional<Long> cupomId) {
         Venda n = new Venda();
