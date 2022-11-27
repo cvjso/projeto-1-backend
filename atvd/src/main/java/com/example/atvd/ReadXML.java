@@ -1,9 +1,6 @@
 package com.example.atvd;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -11,11 +8,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ReadXML {
 
-    public ArrayList<String> run (String path, ArrayList<String> parameters){
+    public List<Serializable> run (String path, ArrayList<String> parameters){
         File file = new File(path);
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
                 .newInstance();
@@ -39,13 +39,15 @@ public class ReadXML {
         }
 
         ArrayList<String> results = new ArrayList<String>();
-
-        for (String param : parameters) {
-            String a = document.getElementsByTagName(param).item(0).getTextContent();
-            results.add(a);
+        Integer len = document.getElementsByTagName(parameters.get(0)).getLength();
+        for (int i = 0; i < len; i++) {
+            for (String param : parameters) {
+                String a = document.getElementsByTagName(param).item(0).getTextContent();
+                results.add(a);
+            }
         }
 
-        return results;
+        return Arrays.asList(results, len);
 
     }
 

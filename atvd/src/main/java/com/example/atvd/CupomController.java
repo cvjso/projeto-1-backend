@@ -3,7 +3,6 @@ package com.example.atvd;
 import com.example.atvd.entities.Cupom;
 import com.example.atvd.entities.Produto;
 import com.example.atvd.repository.CupomRepository;
-import com.example.atvd.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping(path="/cupom")
@@ -36,16 +33,38 @@ public class CupomController {
             e.printStackTrace();
         }
         ReadXML reader = new ReadXML();
-        ArrayList<String> xmlFields = reader.run(destination, Cupom.getFields());
+        List<Serializable> resultReader = (reader.run(destination, Cupom.getFields()));
+        List<String> xmlFields = (List<String>) resultReader.get(0);
+        Integer len = (Integer) resultReader.get(1);
+        cupomRepository.deleteAll();
 
-        Cupom n = new Cupom();
-        n.setId(Long.parseLong(xmlFields.get(0)));
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-        n.setDataVenda(formatter.parse(xmlFields.get(1)));
-        n.setCpf(xmlFields.get(2));
-        n.setStatus(xmlFields.get(3));
-        cupomRepository.save(n);
+        for (int i = 0; i < len; i++) {
+            Cupom n = new Cupom();
+            n.setId(Long.parseLong(xmlFields.get(0)));
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+            n.setDataVenda(formatter.parse(xmlFields.get(1)));
+            n.setCpf(xmlFields.get(2));
+            n.setStatus(xmlFields.get(3));
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            cupomRepository.save(n);
+        }
         return "Imported";
+    }
+
+    @GetMapping(path = "/export")
+    public @ResponseBody String exportCSV(@RequestParam String path) throws IOException {
+        String result = "";
+        for (Cupom v : cupomRepository.findAll()) {
+            result += String.format("\"%d\",", v.getId());
+            result += String.format("\"%s\",", v.getDataVenda());
+            result += String.format("\"%s\",", v.getCpf());
+            result += String.format("\"%s\"\n", v.getStatus());
+        }
+        String url = WriteCSV.run("", result);
+        return  url;
     }
 
     public static void downloadUsingStream(String urlStr, String file) throws IOException {

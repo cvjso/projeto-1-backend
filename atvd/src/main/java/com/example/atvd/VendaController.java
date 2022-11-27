@@ -12,12 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 import static com.example.atvd.CupomController.downloadUsingStream;
 
@@ -44,20 +41,46 @@ public class VendaController {
             e.printStackTrace();
         }
         ReadXML reader = new ReadXML();
-        ArrayList<String> xmlFields = reader.run(destination, Venda.getFields());
+        List<Serializable> resultReader = reader.run(destination, Venda.getFields());
+        List<String> xmlFields = (List<String>) resultReader.get(0);
+        Integer len = (Integer) resultReader.get(1);
+        vendaRepository.deleteAll();
 
-        Venda n = new Venda();
-        n.setId(Long.parseLong(xmlFields.get(0)));
-        n.setProdutoId(Long.parseLong(xmlFields.get(1)));
-        n.setQuantidade(Integer.valueOf(xmlFields.get(2)));
-        n.setPrecoFinal(Integer.valueOf(xmlFields.get(3)));
-        n.setImpostoPago(Integer.valueOf(xmlFields.get(4)));
-        n.setCupomId(Long.parseLong(xmlFields.get(5)));
-        vendaRepository.save(n);
+        for (int i = 0; i < len; i++) {
+            Venda n = new Venda();
+            n.setId(Long.parseLong(xmlFields.get(0)));
+            n.setProdutoId(Long.parseLong(xmlFields.get(1)));
+            n.setQuantidade(Integer.valueOf(xmlFields.get(2)));
+            n.setPrecoFinal(Integer.valueOf(xmlFields.get(3)));
+            n.setImpostoPago(Integer.valueOf(xmlFields.get(4)));
+            n.setCupomId(Long.parseLong(xmlFields.get(5)));
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            vendaRepository.save(n);
+        }
         return "Imported";
     }
 
-    @PostMapping(path="/add")
+    @GetMapping(path = "/export")
+    public @ResponseBody String exportCSV(@RequestParam String path) throws IOException {
+        String result = "";
+        for (Venda v : vendaRepository.findAll()) {
+            result += String.format("\"%d\",", v.getId());
+            result += String.format("\"%d\",", v.getProdutoId());
+            result += String.format("\"%d\",", v.getQuantidade());
+            result += String.format("\"%d\",", v.getPrecoFinal());
+            result += String.format("\"%d\",", v.getImpostoPago());
+            result += String.format("\"%d\"\n", v.getCupomId());
+        }
+        String url = WriteCSV.run("", result);
+        return  url;
+    }
+
+        @PostMapping(path="/add")
     public @ResponseBody String addNewVenda (@RequestParam long produtoId
             , @RequestParam Integer quantidade, @RequestParam Optional<Long> cupomId) {
         Venda n = new Venda();

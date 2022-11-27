@@ -7,4 +7,12 @@
 <impostoPago>1</impostoPago>
 <cupomId>1</cupomId>
 </Venda>
+<Venda>
+<id>11</id>
+<produtoId>1</produtoId>
+<quantidade>5</quantidade>
+<precoFinal>9</precoFinal>
+<impostoPago>2</impostoPago>
+<cupomId>1</cupomId>
+</Venda>
 </XML>

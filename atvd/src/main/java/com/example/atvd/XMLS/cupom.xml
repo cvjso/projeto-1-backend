@@ -5,4 +5,10 @@
 <cpf>07810176455</cpf>
 <status>CANCELADO</status>
 </Cupom>
+<Cupom>
+<id>5</id>
+<dataVenda>28/05/2000</dataVenda>
+<cpf>07810176455</cpf>
+<status>ATIVO</status>
+</Cupom>
 </XML>

@@ -1,18 +1,17 @@
 package com.example.atvd;
 
-import com.example.atvd.entities.Cupom;
 import com.example.atvd.entities.Produto;
+import com.example.atvd.entities.Venda;
 import com.example.atvd.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 import static com.example.atvd.CupomController.downloadUsingStream;
 
@@ -33,17 +32,42 @@ public class ProdutoController {
             e.printStackTrace();
         }
         ReadXML reader = new ReadXML();
-        ArrayList<String> xmlFields = reader.run(destination, Produto.getFields());
+        List<Serializable> resultReader = reader.run(destination, Produto.getFields());
+        List<String> xmlFields = (List<String>) resultReader.get(0);
+        Integer len = (Integer) resultReader.get(1);
+        produtoRepository.deleteAll();
 
-        Produto n = new Produto();
-        n.setId(Long.parseLong(xmlFields.get(0)));
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-        n.setNome(xmlFields.get(1));
-        n.setPreco(Integer.valueOf(xmlFields.get(2)));
-        n.setAliquota(Double.parseDouble(xmlFields.get(3)));
-        n.setCodigo(Long.valueOf(xmlFields.get(4)));
-        produtoRepository.save(n);
+        for (int i = 0; i < len; i++) {
+            Produto n = new Produto();
+            n.setId(Long.parseLong(xmlFields.get(0)));
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+            n.setNome(xmlFields.get(1));
+            n.setPreco(Integer.valueOf(xmlFields.get(2)));
+            n.setAliquota(Double.parseDouble(xmlFields.get(3)));
+            n.setCodigo(Long.valueOf(xmlFields.get(4)));
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            xmlFields.remove(0);
+            produtoRepository.save(n);
+        }
+
         return "Imported";
+    }
+
+    @GetMapping(path = "/export")
+    public @ResponseBody String exportCSV(@RequestParam String path) throws IOException {
+        String result = "";
+        for (Produto v : produtoRepository.findAll()) {
+            result += String.format("\"%d\",", v.getId());
+            result += String.format("\"%s\",", v.getNome());
+            result += String.format("\"%d\",", v.getPreco());
+            result += String.format("\"%f\",", v.getAliquota());
+            result += String.format("\"%d\"\n", v.getCodigo());
+        }
+        String url = WriteCSV.run("", result);
+        return  url;
     }
 
     @PostMapping(path="/add") // Map ONLY POST Requests
