@@ -11,9 +11,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+
+import static com.example.atvd.CupomController.downloadUsingStream;
 
 @Controller
 @RequestMapping(path="/venda")
@@ -26,6 +32,30 @@ public class VendaController {
 
     @Autowired
     private CupomRepository cupomRepository;
+
+    @PutMapping(path = "/import")
+    public @ResponseBody String importXML(@RequestParam String path) throws ParseException {
+
+        String destination = "/home/carlosvinicius/cesar/projeto-1-backend/atvd/src/main/java/com/example/atvd/XMLS/venda.xml";
+
+        try {
+            downloadUsingStream(path, destination);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ReadXML reader = new ReadXML();
+        ArrayList<String> xmlFields = reader.run(destination, Venda.getFields());
+
+        Venda n = new Venda();
+        n.setId(Long.parseLong(xmlFields.get(0)));
+        n.setProdutoId(Long.parseLong(xmlFields.get(1)));
+        n.setQuantidade(Integer.valueOf(xmlFields.get(2)));
+        n.setPrecoFinal(Integer.valueOf(xmlFields.get(3)));
+        n.setImpostoPago(Integer.valueOf(xmlFields.get(4)));
+        n.setCupomId(Long.parseLong(xmlFields.get(5)));
+        vendaRepository.save(n);
+        return "Imported";
+    }
 
     @PostMapping(path="/add")
     public @ResponseBody String addNewVenda (@RequestParam long produtoId

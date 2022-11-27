@@ -1,0 +1,10 @@
+<XML>
+<Venda>
+<id>1</id>
+<produtoId>1</produtoId>
+<quantidade>2</quantidade>
+<precoFinal>1</precoFinal>
+<impostoPago>1</impostoPago>
+<cupomId>1</cupomId>
+</Venda>
+</XML>

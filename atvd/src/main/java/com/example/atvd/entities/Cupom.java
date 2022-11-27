@@ -1,6 +1,7 @@
 package com.example.atvd.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.InputMismatchException;
 
@@ -109,5 +110,14 @@ public class Cupom {
 
     public String getStatus() {
         return status;
+    }
+
+    public static ArrayList<String> getFields(){
+        ArrayList<String> result = new ArrayList<String>();
+        result.add("id");
+        result.add("dataVenda");
+        result.add("cpf");
+        result.add("status");
+        return result;
     }
 }

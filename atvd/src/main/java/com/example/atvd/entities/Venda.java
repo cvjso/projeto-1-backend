@@ -1,6 +1,7 @@
 package com.example.atvd.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 
 @Entity
 public class Venda {
@@ -21,6 +22,17 @@ public class Venda {
     private Integer impostoPago;
 
     private long cupomId;
+
+    public static ArrayList<String> getFields() {
+        ArrayList<String> result = new ArrayList<String>();
+        result.add("id");
+        result.add("produtoId");
+        result.add("quantidade");
+        result.add("precoFinal");
+        result.add("impostoPago");
+        result.add("cupomId");
+        return result;
+    }
 
     public void setCupomId(long cupomId) {
         this.cupomId = cupomId;

@@ -1,18 +1,50 @@
 package com.example.atvd;
 
+import com.example.atvd.entities.Cupom;
 import com.example.atvd.entities.Produto;
 import com.example.atvd.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Optional;
+
+import static com.example.atvd.CupomController.downloadUsingStream;
 
 @Controller
 @RequestMapping(path="/produto")
 public class ProdutoController {
     @Autowired
     private ProdutoRepository produtoRepository;
+
+    @PutMapping(path = "/import")
+    public @ResponseBody String importXML(@RequestParam String path) throws ParseException {
+
+        String destination = "/home/carlosvinicius/cesar/projeto-1-backend/atvd/src/main/java/com/example/atvd/XMLS/produto.xml";
+
+        try {
+            downloadUsingStream(path, destination);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ReadXML reader = new ReadXML();
+        ArrayList<String> xmlFields = reader.run(destination, Produto.getFields());
+
+        Produto n = new Produto();
+        n.setId(Long.parseLong(xmlFields.get(0)));
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        n.setNome(xmlFields.get(1));
+        n.setPreco(Integer.valueOf(xmlFields.get(2)));
+        n.setAliquota(Double.parseDouble(xmlFields.get(3)));
+        n.setCodigo(Long.valueOf(xmlFields.get(4)));
+        produtoRepository.save(n);
+        return "Imported";
+    }
 
     @PostMapping(path="/add") // Map ONLY POST Requests
     public @ResponseBody String addNewProduto (@RequestParam String nome

@@ -1,0 +1,9 @@
+<XML>
+<Produto>
+<id>3</id>
+<nome>vassoura</nome>
+<preco>40</preco>
+<aliquota>0.8</aliquota>
+<codigo>44</codigo>
+</Produto>
+</XML>

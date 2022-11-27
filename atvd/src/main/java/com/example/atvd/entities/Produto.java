@@ -1,6 +1,7 @@
 package com.example.atvd.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 
 @Entity
 public class Produto {
@@ -15,6 +16,16 @@ public class Produto {
     private Double aliquota;
     @Column(nullable = false)
     private Long codigo;
+
+    public static ArrayList<String> getFields() {
+        ArrayList<String> result = new ArrayList<String>();
+        result.add("id");
+        result.add("nome");
+        result.add("preco");
+        result.add("aliquota");
+        result.add("codigo");
+        return result;
+    }
 
     public void setCodigo(Long codigo) {
         this.codigo = codigo;
